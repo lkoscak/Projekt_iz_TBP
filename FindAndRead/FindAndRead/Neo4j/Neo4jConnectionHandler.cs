@@ -5,11 +5,10 @@ using System.Configuration;
 using System.Linq;
 using System.Web;
 
-namespace FindAndRead.App_Start
+namespace FindAndRead.Neo4j
 {
-    public class Neo4jClient
+    public class Neo4jConnectionHandler
     {
-
         public static IGraphClient Client { get; private set; }
 
         public static void Neo4JSetupConnection()
@@ -21,8 +20,8 @@ namespace FindAndRead.App_Start
             var client = new GraphClient(new Uri(url), user, password);
 
             client.Connect();
-        }
 
-        
+            Client = client;
+        }
     }
 }
