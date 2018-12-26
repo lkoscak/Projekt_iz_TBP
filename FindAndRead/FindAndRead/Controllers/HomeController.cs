@@ -15,7 +15,8 @@ namespace FindAndRead.Controllers
 
             Person actor = Neo4jConnectionHandler.Client.Cypher.Match("(m:Person)").Where((Person
                 m) => m.name=="Tom Hanks").Return(m => m.As<Person>()).Results.Single();
-            return Content(actor.name);
+            return View();
+
         }
 
         public ActionResult About()

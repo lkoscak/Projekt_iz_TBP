@@ -23,7 +23,7 @@ namespace FindAndRead
                       "~/Scripts/bootstrap.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
-                      "~/Content/bootstrap.css",
+                      "~/Content/sketchy.css",
                       "~/Content/site.css"));
         }
     }
