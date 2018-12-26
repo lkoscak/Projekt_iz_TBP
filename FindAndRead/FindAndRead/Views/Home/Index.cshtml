@@ -2,6 +2,9 @@
     ViewBag.Title = "Find&Read";
 }
 
+
+
+
 <div class="jumbotron">
     <h1 align="center" class="text-info">Find&Read</h1>
     <p class="lead" align="center">Najbolje stranica za ljubitelje knjiga kojima je jednostavno potrebna pomoć pri odabiru sljedeće pisane pustolovine</p>
@@ -22,7 +25,6 @@
                 <option value="3">3+</option>
                 <option value="4">4+</option>
                 <option value="5">5</option>
-               
             </select>
         </div>
     </div>
@@ -50,7 +52,7 @@
     <div class="col-md-4">
         <h2 class="text-info">Preporuka temeljem pročitanih knjiga</h2>
         <p>Automatska preporuka knjiga temeljem vaših pročitanih knjiga!</p>
-        <button type="button" class="btn btn-outline-info" align="center" >Preporuči knjige!</button>
+        <button id="gumb" type="button" class="btn btn-outline-info" align="center">Preporuči knjige!</button>
     </div>
 </div>
 <br>
@@ -94,4 +96,19 @@
         </tbody>
     </table>
 </div>
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+
+
+        $("#gumb").click(function () {
+            $.get("/Home/Save", null, function (data) {
+                alert(data);
+            });  
+        });
+
+    });
+</script>
 
