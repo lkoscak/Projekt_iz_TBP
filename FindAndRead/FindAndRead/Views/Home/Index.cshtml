@@ -3,31 +3,95 @@
 }
 
 <div class="jumbotron">
-    <h1 align="center">Find&Read</h1>
-    <p class="lead" align="center">Najbolje stranica za ljubitelje knjiga kojima je jednostavno potrebna pomoć pri odabiru sljedeće pisane pustolovine! </p>
+    <h1 align="center" class="text-info">Find&Read</h1>
+    <p class="lead" align="center">Najbolje stranica za ljubitelje knjiga kojima je jednostavno potrebna pomoć pri odabiru sljedeće pisane pustolovine</p>
+    <p class="p-0" align="center">Odaberite jedan od kriterija i pronađite knjigu za sebe!</p>
 </div>
 
 <div class="row">
     <div class="col-md-4">
-        <h2>Preporuka prema ocjenama</h2>
+        <h2 class="text-danger">Preporuka prema ocjenama</h2>
         <p>
             Preporučene knjige prema prosječnoj ocijeni jednakoj ili većoj od odabranog kriterija!
         </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+        <div class="form-group">
+            <select class="custom-select">
+                <option selected="">Odaberite ocjenu</option>
+                <option value="1">1+</option>
+                <option value="2">2+</option>
+                <option value="3">3+</option>
+                <option value="4">4+</option>
+                <option value="5">5</option>
+               
+            </select>
+        </div>
     </div>
     <div class="col-md-4">
-        <h2>Preporuka prema razdoblju</h2>
+        <h2 class="text-warning">Preporuka prema razdoblju</h2>
         <p>Preporuka najčitanijih knjiga u odabranom vremenkom razdoblju</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+        <div class="form-group">
+            <select class="custom-select">
+                <option selected="">Odaberite razdoblje</option>
+                <option value="tjedan">Ovaj tjedan</option>
+                <option value="mjesec">Ovaj mjesec</option>
+                <option value="godina">Ovu godinu</option>
+                <option value="sve">Od početka svijeta :D</option>
+            </select>
+        </div>
     </div>
     <div class="col-md-4">
-        <h2>Preporuka prema autoru</h2>
+        <h2 class="text-success">Preporuka prema autoru</h2>
         <p>Knjige vašeg omiljenog autora sortirane prema prosječnoj ocijeni</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+        <div class="form-group">
+            <label class="col-form-label, text-success" for="inputDefault">Počnite upisivati ime ili prezime autora</label>
+            <input type="text" class="form-control" placeholder="Autor..." id="inputDefault">
+        </div>
     </div>
     <div class="col-md-4">
-        <h2>Preporuka temeljem pročitanih knjiga</h2>
+        <h2 class="text-info">Preporuka temeljem pročitanih knjiga</h2>
         <p>Automatska preporuka knjiga temeljem vaših pročitanih knjiga!</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+        <button type="button" class="btn btn-outline-info" align="center" >Preporuči knjige!</button>
     </div>
 </div>
+<br>
+<div class="jumbotron">
+    <h1 align="center" class="text-warning">Preporučene knjige</h1>
+    <p class="lead" align="center">na temelju unesenog kriterija u tablici su dane preporučene knjige</p>
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Naslov</th>
+                <th scope="col">Autor</th>
+                <th scope="col">Prosječna ocjena</th>
+                <th scope="col">Broj čitanja</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="table-success">
+                <th scope="row">Success</th>
+                <td>Column content</td>
+                <td>Column content</td>
+                <td>Column content</td>
+            </tr>
+            <tr class="table-danger">
+                <th scope="row">Danger</th>
+                <td>Column content</td>
+                <td>Column content</td>
+                <td>Column content</td>
+            </tr>
+            <tr class="table-warning">
+                <th scope="row">Warning</th>
+                <td>Column content</td>
+                <td>Column content</td>
+                <td>Column content</td>
+            </tr>
+            <tr class="table-info">
+                <th scope="row">Info</th>
+                <td>Column content</td>
+                <td>Column content</td>
+                <td>Column content</td>
+        </tbody>
+    </table>
+</div>
+
