@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FindAndRead.Models;
+using FindAndRead.Neo4j;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -10,7 +12,10 @@ namespace FindAndRead.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+
+            Person actor = Neo4jConnectionHandler.Client.Cypher.Match("(m:Person)").Where((Person
+                m) => m.name=="Tom Hanks").Return(m => m.As<Person>()).Results.Single();
+            return Content(actor.name);
         }
 
         public ActionResult About()
