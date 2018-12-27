@@ -50,6 +50,20 @@ namespace FindAndRead.Controllers
             return result;
         }
 
+        public List<BooksForTableData> getBooksForTableByAuthor(string autor)
+        {
+            var query = Neo4jConnectionHandler.Client.Cypher.OptionalMatch("(u:Korisnik)-[p:PROCITANO]->(b:Knjiga)-[n:NAPISANO_OD]->(w:Pisac)").Where((Autor w)=>w.ime==".*'+autor+'.*")
+               .Return((b, p, w) => new BooksForTableData
+               {
+                   knjiga = b.As<Book>(),
+                   listaCitanja = p.CollectAs<ProcitanoVeza>(),
+                   autor = w.As<Autor>()
+               });
+
+            var result = query.Results.ToList();
+            return result;
+        }
+
         public string getBooksByRating(string rating)
         {
             List<BooksForTableData> result = getBooksForTable();
@@ -78,6 +92,17 @@ namespace FindAndRead.Controllers
 
             var jsonSerialiser = new JavaScriptSerializer();
             var json = jsonSerialiser.Serialize(sortedList);
+
+            return json;
+
+        }
+
+        public string GetAuthorsBooks(string autor)
+        {
+            List<BooksForTableData> result = getBooksForTableByAuthor(autor);
+
+            var jsonSerialiser = new JavaScriptSerializer();
+            var json = jsonSerialiser.Serialize(result);
 
             return json;
 

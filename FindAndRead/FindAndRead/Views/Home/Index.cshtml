@@ -46,9 +46,10 @@
         <h2 class="text-success">Preporuka prema autoru</h2>
         <p>Knjige vašeg omiljenog autora sortirane prema prosječnoj ocijeni</p>
         <div class="form-group">
-            <label class="col-form-label, text-success" for="inputDefault">Počnite upisivati ime ili prezime autora</label>
-            <input id="autoriAutocomplete" type="text" class="form-control" placeholder="Autor..." id="inputDefault">
+            <label class="col-form-label, text-success" for="inputDefault">Upišite ime ili prezime autora</label>
+            <input id="autoriAutocomplete" type="text" class="form-control" placeholder="Autor" id="inputDefault">
         </div>
+        <button id="selectPremaAutoru" type="button" class="btn btn-success">Pretraži</button>
     </div>
     <div class="col-md-4">
         <h2 class="text-info">Preporuka temeljem pročitanih knjiga</h2>
@@ -71,29 +72,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr class="table-success">
-                <td>Column content</td>
-                <td>Column content</td>
-                <td>Column content</td>
-                <td>Column content</td>
-            </tr>
-            <tr class="table-danger">
-                <td>Column content</td>
-                <td>Column content</td>
-                <td>Column content</td>
-                <td>Column content</td>
-            </tr>
-            <tr class="table-warning">
-                <td>Column content</td>
-                <td>Column content</td>
-                <td>Column content</td>
-                <td>Column content</td>
-            </tr>
-            <tr class="table-info">
-                <td>Column content</td>
-                <td>Column content</td>
-                <td>Column content</td>
-                <td>Column content</td>
+            
         </tbody>
     </table>
 </div>
@@ -119,6 +98,10 @@
                     autori.push(result[index].ime);
                 });
             });
+
+           /* $("#autoriAutocomplete").autocomplete({
+                source: autori
+            });*/
         }
 
         $("#ocjenaSelect").on('change', function (e) {
@@ -183,10 +166,13 @@
        
 
 
-        $("#gumb").click(function () {
-            $.get("/Home/Save", null, function (data) {
-                //alert(data);
-                result = $.parseJSON(data);
+        $("#selectPremaAutoru").click(function () {
+
+            var autor = $('#autoriAutocomplete').val();
+
+            $.get("/Home/GetAuthorsBooks", { autor: autor }, function (data) {
+                alert(data);
+                /*result = $.parseJSON(data);
                 //console.log(result[0].name);
                 $([document.documentElement, document.body]).animate({
                     scrollTop: $("#tablicaContainer").offset().top
@@ -197,7 +183,7 @@
                     $('#tablicaPreporuka').focus();
                     $('#tablicaPreporuka > tbody:last-child').append('<tr><td>'+result[index].name+'</td></tr>');
 
-                    });
+                    });*/
                 });
             });  
         });
