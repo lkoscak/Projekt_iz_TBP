@@ -5,9 +5,9 @@ using System.Web;
 
 namespace FindAndRead.Models
 {
-    public class Person
+    public class ProcitanoVeza
     {
-        public string name { get; set; }
-        public string born { get; set; }
+        public string datum { get; set; }
+        public int ocjena { get; set; }
     }
 }

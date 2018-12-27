@@ -15,22 +15,40 @@ namespace FindAndRead.Controllers
         public ActionResult Index()
         {
 
-            Person actor = Neo4jConnectionHandler.Client.Cypher.Match("(m:Person)").Where((Person
-                m) => m.name=="Tom Hanks").Return(m => m.As<Person>()).Results.Single();
+            /*Person actor = Neo4jConnectionHandler.Client.Cypher.Match("(m:Person)").Where((Person
+                m) => m.name=="Tom Hanks").Return(m => m.As<Person>()).Results.Single();*/
             return View();
 
         }
 
-        public String Save()
+        public String GetAuthors()
         {
-            /*Person actor = Neo4jConnectionHandler.Client.Cypher.Match("(m:Person)").Where((Person
-                m) => m.name == "Tom Hanks").Return(m => m.As<Person>()).Results.Single();
+            /*Autor autor = Neo4jConnectionHandler.Client.Cypher.Match("(a:Autor)").Where((Autor
+                a) => a.ime == "Tom Hanks").Return(m => m.As<Person>()).Results.Single();
             //ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Record Inserted Successfully')", true);
             return actor.name+" "+actor.born;*/
 
-            IEnumerable<Person> actors = Neo4jConnectionHandler.Client.Cypher.Match("(m:Person)").Return(m => m.As<Person>()).Results.ToList();
+            IEnumerable<Autor> autori = Neo4jConnectionHandler.Client.Cypher.Match("(a:Pisac)").Return(a => a.As<Autor>()).Results.ToList();
             var jsonSerialiser = new JavaScriptSerializer();
-            var json = jsonSerialiser.Serialize(actors);
+            var json = jsonSerialiser.Serialize(autori);
+
+            return json;
+
+        }
+
+        public string getBooksByRating()
+        {
+             var query = Neo4jConnectionHandler.Client.Cypher.OptionalMatch("(u:Korisnik)-[p:PROCITANO]->(b:Knjiga)")
+                .Return((b, p) => new BooksByRatingData
+                {
+                    knjiga=b.As<Book>(),
+                    listaCitanja=p.CollectAs<ProcitanoVeza>()
+                });
+
+            var result = query.Results.ToList();
+
+            var jsonSerialiser = new JavaScriptSerializer();
+            var json = jsonSerialiser.Serialize(result);
 
             return json;
 

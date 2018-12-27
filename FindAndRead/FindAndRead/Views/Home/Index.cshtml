@@ -47,7 +47,7 @@
         <p>Knjige vašeg omiljenog autora sortirane prema prosječnoj ocijeni</p>
         <div class="form-group">
             <label class="col-form-label, text-success" for="inputDefault">Počnite upisivati ime ili prezime autora</label>
-            <input type="text" class="form-control" placeholder="Autor..." id="inputDefault">
+            <input id="autoriAutocomplete" type="text" class="form-control" placeholder="Autor..." id="inputDefault">
         </div>
     </div>
     <div class="col-md-4">
@@ -102,6 +102,31 @@
 
 
     $(document).ready(function () {
+
+        //getAuthors();
+
+        function getAuthors() {
+
+            var autori = [];
+
+            $.get("/Home/GetAuthors", null, function (data) {
+                result = $.parseJSON(data);
+                $.each(result, function (index, value) {
+                    console.log(result[index].ime);
+                    autori.push(result[index].ime);
+                });
+            });
+        }
+
+    
+
+        $.get("/Home/getBooksByRating", null, function (data) {
+            result = $.parseJSON(data);
+            $.each(result, function (index, value) {
+                console.log(result[index]);
+
+            });
+        });
 
 
         $("#gumb").click(function () {

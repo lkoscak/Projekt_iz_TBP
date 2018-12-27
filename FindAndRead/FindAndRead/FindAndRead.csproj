@@ -149,7 +149,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Person.cs" />
+    <Compile Include="Models\Autor.cs" />
+    <Compile Include="Models\Book.cs" />
+    <Compile Include="Models\BooksByRatingData.cs" />
+    <Compile Include="Models\ProcitanoVeza.cs" />
     <Compile Include="Neo4j\Neo4jConnectionHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
