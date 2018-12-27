@@ -139,8 +139,8 @@
                     $.each(result, function (index, value) {
                         console.log(result[index]);
                         var color = rowColors[Math.floor(Math.random() * rowColors.length)];
-                        $('#tablicaPreporuka > tbody:last-child').append('<tr><td class="'+color+'">' + result[index].knjiga.naslov +
-                            '</td><td class="' + color + '">nepoznato još</td><td class="' + color + '">' + result[index].prosjecnaOcjena + '</td><td class="' + color +'">' + result[index].brojCitanja +
+                        $('#tablicaPreporuka > tbody:last-child').append('<tr><td class="' + color + '">' + result[index].knjiga.naslov +
+                            '</td><td class="' + color + '">' + result[index].autor.ime + '</td><td class="' + color + '">' + result[index].prosjecnaOcjena + '</td><td class="' + color + '">' + result[index].brojCitanja +
                             '</td></tr>');
 
                     });

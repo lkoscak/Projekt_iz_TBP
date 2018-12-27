@@ -11,5 +11,6 @@ namespace FindAndRead.Models
         public double prosjecnaOcjena { get; set; }
         public IEnumerable<ProcitanoVeza> listaCitanja { get; set; }
         public Book knjiga { get; set; }
+        public Autor autor { get; set; }
     }
 }

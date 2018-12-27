@@ -38,11 +38,12 @@ namespace FindAndRead.Controllers
 
         public string getBooksByRating(string rating)
         {
-             var query = Neo4jConnectionHandler.Client.Cypher.OptionalMatch("(u:Korisnik)-[p:PROCITANO]->(b:Knjiga)")
-                .Return((b, p) => new BooksByRatingData
+             var query = Neo4jConnectionHandler.Client.Cypher.OptionalMatch("(u:Korisnik)-[p:PROCITANO]->(b:Knjiga)-[n:NAPISANO_OD]->(w:Pisac)")
+                .Return((b, p, w) => new BooksByRatingData
                 {
                     knjiga=b.As<Book>(),
-                    listaCitanja=p.CollectAs<ProcitanoVeza>()
+                    listaCitanja=p.CollectAs<ProcitanoVeza>(),
+                    autor=w.As<Autor>()
                 });
 
             var result = query.Results.ToList();
