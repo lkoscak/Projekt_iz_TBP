@@ -32,7 +32,7 @@
         <h2 class="text-warning">Preporuka prema razdoblju</h2>
         <p>Preporuka najčitanijih knjiga u odabranom vremenkom razdoblju</p>
         <div class="form-group">
-            <br>
+            
             <select class="custom-select">
                 <option selected="">Odaberite razdoblje</option>
                 <option value="tjedan">Ovaj tjedan</option>
@@ -57,7 +57,7 @@
     </div>
 </div>
 <br>
-<div class="jumbotron">
+<div id="tablicaContainer" class="jumbotron">
     <h1 align="center" class="text-warning">Preporučene knjige</h1>
     <p class="lead" align="center">na temelju unesenog kriterija u tablici su dane preporučene knjige</p>
 
@@ -109,11 +109,13 @@
                 //alert(data);
                 result = $.parseJSON(data);
                 //console.log(result[0].name);
-
+                $([document.documentElement, document.body]).animate({
+                    scrollTop: $("#tablicaContainer").offset().top
+                }, 1000);
                 $("#tablicaPreporuka tbody").empty();
                 $.each(result, function (index,value) {
                     console.log(result[index].name);
-
+                    $('#tablicaPreporuka').focus();
                     $('#tablicaPreporuka > tbody:last-child').append('<tr><td>'+result[index].name+'</td></tr>');
 
                     });
