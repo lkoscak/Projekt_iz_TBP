@@ -36,7 +36,7 @@ namespace FindAndRead.Controllers
 
         }
 
-        public List<BooksForTableData> getBooksForTable(string rating)
+        public List<BooksForTableData> getBooksForTable()
         {
             var query = Neo4jConnectionHandler.Client.Cypher.OptionalMatch("(u:Korisnik)-[p:PROCITANO]->(b:Knjiga)-[n:NAPISANO_OD]->(w:Pisac)")
                .Return((b, p, w) => new BooksForTableData
@@ -52,7 +52,7 @@ namespace FindAndRead.Controllers
 
         public string getBooksByRating(string rating)
         {
-            List<BooksForTableData> result = getBooksForTable(rating);
+            List<BooksForTableData> result = getBooksForTable();
 
             foreach (BooksForTableData booksByRatingData in result.ToList())
             {
@@ -82,6 +82,65 @@ namespace FindAndRead.Controllers
             return json;
 
         }
+
+        public string getBooksByTime(string timeInterval)
+        {
+            List<BooksForTableData> result = getBooksForTable();
+
+            DateTime trenutniDatum = DateTime.Now.Date;
+            bool readFlag=false;
+            switch (timeInterval)
+            {
+                case("tjedan"):
+                    { trenutniDatum = trenutniDatum.AddDays(-7); break; }
+                case ("mjesec"):
+                    { trenutniDatum = trenutniDatum.AddDays(-30); break; }
+                case ("godina"):
+                    { trenutniDatum = trenutniDatum.AddDays(-365); break; }
+                case ("sve"):
+                    { trenutniDatum = trenutniDatum.AddYears(-100); break; }
+                default:
+                    break;
+            }
+
+            foreach (BooksForTableData booksByRatingData in result.ToList())
+            {
+                readFlag = false;
+                //booksByRatingData.brojCitanja = booksByRatingData.listaCitanja.Count();
+                //if (booksByRatingData.brojCitanja == 0) booksByRatingData.prosjecnaOcjena = 0;
+                int sumaOcjena = 0;
+                int brojCitanja = 0;
+                    foreach (ProcitanoVeza procitanoVeza in booksByRatingData.listaCitanja)
+                    {
+                        
+                        DateTime bookDate = DateTime.ParseExact(procitanoVeza.datum, "dd.MM.yyyy.", System.Globalization.CultureInfo.InvariantCulture);
+
+                    if (bookDate >= trenutniDatum)
+                    {
+                        readFlag = true;
+                        brojCitanja++;
+                        sumaOcjena += procitanoVeza.ocjena;
+                    }
+                    }
+
+                if (!readFlag) result.Remove(booksByRatingData);
+                else
+                {
+                    booksByRatingData.brojCitanja = brojCitanja;
+                    booksByRatingData.prosjecnaOcjena = Math.Round((double)sumaOcjena / brojCitanja, 2);
+                }
+      
+            }
+
+            List<BooksForTableData> sortedList = result.OrderByDescending(o => o.brojCitanja).ToList();
+
+            var jsonSerialiser = new JavaScriptSerializer();
+            var json = jsonSerialiser.Serialize(sortedList);
+
+            return json;
+
+        }
+
 
         public ActionResult About()
         {

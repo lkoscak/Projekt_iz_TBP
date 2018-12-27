@@ -33,7 +33,7 @@
         <p>Preporuka najčitanijih knjiga u odabranom vremenkom razdoblju</p>
         <div class="form-group">
             
-            <select class="custom-select">
+            <select id="timeSelect" class="custom-select">
                 <option value="0" selected="">Odaberite razdoblje</option>
                 <option value="tjedan">Ovaj tjedan</option>
                 <option value="mjesec">Ovaj mjesec</option>
@@ -135,6 +135,34 @@
                 $("#tablicaPreporuka tbody").empty();
 
                 $.get("/Home/getBooksByRating", { rating: valueSelected }, function (data) {
+                    result = $.parseJSON(data);
+                    $.each(result, function (index, value) {
+                        console.log(result[index]);
+                        var color = rowColors[Math.floor(Math.random() * rowColors.length)];
+                        $('#tablicaPreporuka > tbody:last-child').append('<tr><td class="' + color + '">' + result[index].knjiga.naslov +
+                            '</td><td class="' + color + '">' + result[index].autor.ime + '</td><td class="' + color + '">' + result[index].prosjecnaOcjena + '</td><td class="' + color + '">' + result[index].brojCitanja +
+                            '</td></tr>');
+
+                    });
+                });
+            }
+
+        });
+
+        $("#timeSelect").on('change', function (e) {
+
+            var optionSelected = $("option:selected", this);
+            var valueSelected = this.value;
+
+            if (valueSelected != "0") {
+
+                $([document.documentElement, document.body]).animate({
+                    scrollTop: $("#tablicaContainer").offset().top
+                }, 1000);
+
+                $("#tablicaPreporuka tbody").empty();
+
+                $.get("/Home/getBooksByTime", { timeInterval: valueSelected }, function (data) {
                     result = $.parseJSON(data);
                     $.each(result, function (index, value) {
                         console.log(result[index]);
