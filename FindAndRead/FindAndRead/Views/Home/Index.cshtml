@@ -32,6 +32,7 @@
         <h2 class="text-warning">Preporuka prema razdoblju</h2>
         <p>Preporuka najčitanijih knjiga u odabranom vremenkom razdoblju</p>
         <div class="form-group">
+            <br>
             <select class="custom-select">
                 <option selected="">Odaberite razdoblje</option>
                 <option value="tjedan">Ovaj tjedan</option>
@@ -71,25 +72,25 @@
         </thead>
         <tbody>
             <tr class="table-success">
-                <th scope="row">Success</th>
+                <td>Column content</td>
                 <td>Column content</td>
                 <td>Column content</td>
                 <td>Column content</td>
             </tr>
             <tr class="table-danger">
-                <th scope="row">Danger</th>
+                <td>Column content</td>
                 <td>Column content</td>
                 <td>Column content</td>
                 <td>Column content</td>
             </tr>
             <tr class="table-warning">
-                <th scope="row">Warning</th>
+                <td>Column content</td>
                 <td>Column content</td>
                 <td>Column content</td>
                 <td>Column content</td>
             </tr>
             <tr class="table-info">
-                <th scope="row">Info</th>
+                <td>Column content</td>
                 <td>Column content</td>
                 <td>Column content</td>
                 <td>Column content</td>
@@ -108,6 +109,8 @@
                 //alert(data);
                 result = $.parseJSON(data);
                 //console.log(result[0].name);
+
+                $("#tablicaPreporuka tbody").empty();
                 $.each(result, function (index,value) {
                     console.log(result[index].name);
 
