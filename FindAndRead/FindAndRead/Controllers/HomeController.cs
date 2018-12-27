@@ -47,6 +47,22 @@ namespace FindAndRead.Controllers
 
             var result = query.Results.ToList();
 
+            foreach (BooksByRatingData booksByRatingData in result)
+            {
+                booksByRatingData.brojCitanja = booksByRatingData.listaCitanja.Count();
+                if (booksByRatingData.brojCitanja == 0) booksByRatingData.prosjecnaOcjena = 0;
+                else {
+                    int sumaOcjena = 0;
+                    foreach (ProcitanoVeza procitanoVeza in booksByRatingData.listaCitanja)
+                    {
+                        sumaOcjena += procitanoVeza.ocjena;
+                    }
+
+                    booksByRatingData.prosjecnaOcjena=Math.Round((double)sumaOcjena/booksByRatingData.brojCitanja,2);
+                   
+                }
+            }
+
             var jsonSerialiser = new JavaScriptSerializer();
             var json = jsonSerialiser.Serialize(result);
 
