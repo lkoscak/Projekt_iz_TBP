@@ -105,10 +105,18 @@
 
         $("#gumb").click(function () {
             $.get("/Home/Save", null, function (data) {
-                alert(data);
+                //alert(data);
+                result = $.parseJSON(data);
+                //console.log(result[0].name);
+                $.each(result, function (index,value) {
+                    console.log(result[index].name);
+                   // $.each(this, function (k, v) {
+                     //   alert(k + " " + v);
+                    });
+                });
             });  
         });
 
-    });
+    //});
 </script>
 
