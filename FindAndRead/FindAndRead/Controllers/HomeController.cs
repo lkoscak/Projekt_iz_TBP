@@ -62,7 +62,7 @@ namespace FindAndRead.Controllers
 
                 }
 
-                if (booksByRatingData.prosjecnaOcjena < int.Parse("3")) result.Remove(booksByRatingData);
+                if (booksByRatingData.prosjecnaOcjena < int.Parse(rating)) result.Remove(booksByRatingData);
 
 
             }

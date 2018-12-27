@@ -18,8 +18,8 @@
             Preporučene knjige prema prosječnoj ocijeni jednakoj ili većoj od odabranog kriterija!
         </p>
         <div class="form-group">
-            <select class="custom-select">
-                <option selected="">Odaberite ocjenu</option>
+            <select id="ocjenaSelect" class="custom-select">
+                <option value="0" selected="">Odaberite ocjenu</option>
                 <option value="1">1+</option>
                 <option value="2">2+</option>
                 <option value="3">3+</option>
@@ -34,7 +34,7 @@
         <div class="form-group">
             
             <select class="custom-select">
-                <option selected="">Odaberite razdoblje</option>
+                <option value="0" selected="">Odaberite razdoblje</option>
                 <option value="tjedan">Ovaj tjedan</option>
                 <option value="mjesec">Ovaj mjesec</option>
                 <option value="godina">Ovu godinu</option>
@@ -118,15 +118,27 @@
             });
         }
 
-    
+        $("#ocjenaSelect").on('change', function (e) {
 
-        $.get("/Home/getBooksByRating", null, function (data) {
-            result = $.parseJSON(data);
-            $.each(result, function (index, value) {
-                console.log(result[index]);
+            var optionSelected = $("option:selected", this);
+            var valueSelected = this.value;
 
-            });
+            if (valueSelected != "0") {
+
+                $.get("/Home/getBooksByRating", { rating: valueSelected }, function (data) {
+                    result = $.parseJSON(data);
+                    $.each(result, function (index, value) {
+                        console.log(result[index]);
+                    });
+                });
+            }
+
         });
+
+       
+
+
+       
 
 
         $("#gumb").click(function () {
