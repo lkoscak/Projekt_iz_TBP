@@ -105,9 +105,12 @@
 
         //getAuthors();
 
+        var rowColors = ["table-success", "table-warning", "table-danger", "table-info"];
+
         function getAuthors() {
 
             var autori = [];
+           
 
             $.get("/Home/GetAuthors", null, function (data) {
                 result = $.parseJSON(data);
@@ -125,10 +128,21 @@
 
             if (valueSelected != "0") {
 
+                $([document.documentElement, document.body]).animate({
+                    scrollTop: $("#tablicaContainer").offset().top
+                }, 1000);
+
+                $("#tablicaPreporuka tbody").empty();
+
                 $.get("/Home/getBooksByRating", { rating: valueSelected }, function (data) {
                     result = $.parseJSON(data);
                     $.each(result, function (index, value) {
                         console.log(result[index]);
+                        var color = rowColors[Math.floor(Math.random() * rowColors.length)];
+                        $('#tablicaPreporuka > tbody:last-child').append('<tr><td class="'+color+'">' + result[index].knjiga.naslov +
+                            '</td><td class="' + color + '">nepoznato još</td><td class="' + color + '">' + result[index].prosjecnaOcjena + '</td><td class="' + color +'">' + result[index].brojCitanja +
+                            '</td></tr>');
+
                     });
                 });
             }
