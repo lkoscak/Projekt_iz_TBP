@@ -5,7 +5,7 @@ using System.Web;
 
 namespace FindAndRead.Models
 {
-    public class BooksByRatingData
+    public class BooksForTableData
     {
         public int brojCitanja { get; set; }
         public double prosjecnaOcjena { get; set; }

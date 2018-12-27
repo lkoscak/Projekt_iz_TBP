@@ -151,7 +151,7 @@
     </Compile>
     <Compile Include="Models\Autor.cs" />
     <Compile Include="Models\Book.cs" />
-    <Compile Include="Models\BooksByRatingData.cs" />
+    <Compile Include="Models\BooksForTableData.cs" />
     <Compile Include="Models\ProcitanoVeza.cs" />
     <Compile Include="Neo4j\Neo4jConnectionHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

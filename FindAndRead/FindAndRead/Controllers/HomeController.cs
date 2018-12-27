@@ -36,19 +36,25 @@ namespace FindAndRead.Controllers
 
         }
 
-        public string getBooksByRating(string rating)
+        public List<BooksForTableData> getBooksForTable(string rating)
         {
-             var query = Neo4jConnectionHandler.Client.Cypher.OptionalMatch("(u:Korisnik)-[p:PROCITANO]->(b:Knjiga)-[n:NAPISANO_OD]->(w:Pisac)")
-                .Return((b, p, w) => new BooksByRatingData
-                {
-                    knjiga=b.As<Book>(),
-                    listaCitanja=p.CollectAs<ProcitanoVeza>(),
-                    autor=w.As<Autor>()
-                });
+            var query = Neo4jConnectionHandler.Client.Cypher.OptionalMatch("(u:Korisnik)-[p:PROCITANO]->(b:Knjiga)-[n:NAPISANO_OD]->(w:Pisac)")
+               .Return((b, p, w) => new BooksForTableData
+               {
+                   knjiga = b.As<Book>(),
+                   listaCitanja = p.CollectAs<ProcitanoVeza>(),
+                   autor = w.As<Autor>()
+               });
 
             var result = query.Results.ToList();
+            return result;
+        }
 
-            foreach (BooksByRatingData booksByRatingData in result.ToList())
+        public string getBooksByRating(string rating)
+        {
+            List<BooksForTableData> result = getBooksForTable(rating);
+
+            foreach (BooksForTableData booksByRatingData in result.ToList())
             {
                 booksByRatingData.brojCitanja = booksByRatingData.listaCitanja.Count();
                 if (booksByRatingData.brojCitanja == 0) booksByRatingData.prosjecnaOcjena = 0;
@@ -68,7 +74,7 @@ namespace FindAndRead.Controllers
 
             }
 
-            List<BooksByRatingData> sortedList = result.OrderByDescending(o => o.prosjecnaOcjena).ToList();
+            List<BooksForTableData> sortedList = result.OrderByDescending(o => o.prosjecnaOcjena).ToList();
 
             var jsonSerialiser = new JavaScriptSerializer();
             var json = jsonSerialiser.Serialize(sortedList);
