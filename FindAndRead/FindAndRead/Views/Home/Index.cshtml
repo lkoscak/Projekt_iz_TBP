@@ -60,7 +60,7 @@
     <h1 align="center" class="text-warning">Preporučene knjige</h1>
     <p class="lead" align="center">na temelju unesenog kriterija u tablici su dane preporučene knjige</p>
 
-    <table class="table table-hover">
+    <table id="tablicaPreporuka" class="table table-hover">
         <thead>
             <tr>
                 <th scope="col">Naslov</th>
@@ -110,8 +110,9 @@
                 //console.log(result[0].name);
                 $.each(result, function (index,value) {
                     console.log(result[index].name);
-                   // $.each(this, function (k, v) {
-                     //   alert(k + " " + v);
+
+                    $('#tablicaPreporuka > tbody:last-child').append('<tr><td>'+result[index].name+'</td></tr>');
+
                     });
                 });
             });  
