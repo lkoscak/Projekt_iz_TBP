@@ -156,6 +156,33 @@ namespace FindAndRead.Controllers
 
         }
 
+        public String LoginStatus()
+        {
+            String response = "ne";
+            HttpCookie user_login_cookie = Request.Cookies["prijavljeni_korisnik"];
+            if (user_login_cookie != null)
+            {
+                response = "da";
+            }
+
+            var jsonSerialiser = new JavaScriptSerializer();
+            var json = jsonSerialiser.Serialize(response);
+
+            return json;
+
+        }
+
+        public void odjava()
+        {
+            HttpCookie user_login_cookie = Request.Cookies["prijavljeni_korisnik"];
+            if (user_login_cookie != null)
+            {
+                HttpCookie myCookie = new HttpCookie("prijavljeni_korisnik");
+                myCookie.Expires = DateTime.Now.AddDays(-1d);
+                Response.Cookies.Add(myCookie);
+            }
+        }
+
         public string getBooksByTime(string timeInterval)
         {
             List<BooksForTableData> result = getBooksForTable();
