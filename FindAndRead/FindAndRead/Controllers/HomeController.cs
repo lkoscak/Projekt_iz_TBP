@@ -14,11 +14,35 @@ namespace FindAndRead.Controllers
     {
         public ActionResult Index()
         {
+            
 
             /*Person actor = Neo4jConnectionHandler.Client.Cypher.Match("(m:Person)").Where((Person
                 m) => m.name=="Tom Hanks").Return(m => m.As<Person>()).Results.Single();*/
             return View();
 
+        }
+
+        private void createCookie(String korisnickoIme,String lozinka)
+        {
+            HttpCookie user = new HttpCookie("prijavljeni_korisnik");
+            user["korisnicko_ime"] = korisnickoIme;
+            Response.Cookies.Add(user);
+        }
+
+        public String prijava(String korIme, String lozinka)
+        {
+            Korisnik korisnik = Neo4jConnectionHandler.Client.Cypher.OptionalMatch("(a:Korisnik)").Where((Korisnik
+               a) => a.korisnicko_ime == korIme).AndWhere((Korisnik a)=>a.lozinka==lozinka).Return(a => a.As<Korisnik>()).Results.Single();
+
+            var jsonSerialiser = new JavaScriptSerializer();
+            if (korisnik != null)
+            {
+                createCookie(korIme, lozinka);
+            }
+
+            var json = jsonSerialiser.Serialize(korisnik);
+
+            return json;
         }
 
         public String GetAuthors()

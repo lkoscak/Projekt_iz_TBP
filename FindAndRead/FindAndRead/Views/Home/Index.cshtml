@@ -5,17 +5,17 @@
 
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand text-danger" href="#">Prijavite se</a>
+    <a class="navbar-brand text-danger" >Prijavite se</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarColor03">
-        <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="text" placeholder="korisničko ime">
-            <input class="form-control mr-sm-2" type="text" placeholder="lozinka">
-            <button class="btn btn-outline-danger" type="submit">prijava</button>
-        </form>
+        <div class="form-inline my-2 my-lg-0">
+            <input id="korIme" class="form-control mr-sm-2" type="text" placeholder="korisničko ime">
+            <input id="lozinka" class="form-control mr-sm-2" type="password" placeholder="lozinka">
+            <button id="prijava" class="btn btn-outline-danger">prijava</button>
+        </div>
     </div>
 </nav>
 <br><br>
@@ -117,6 +117,8 @@
           
         }
 
+        
+
         $("#ocjenaSelect").on('change', function (e) {
 
             var optionSelected = $("option:selected", this);
@@ -202,6 +204,25 @@
         });
 
        
+
+        $("#prijava").click(function () {
+
+            //alert("dsfvdsf");
+
+            var korIme = $("#korIme").val();
+            var lozinka = $("#lozinka").val();
+
+            //alert(korIme + " " + lozinka);
+
+            $.get("/Home/prijava", { korIme: korIme, lozinka: lozinka }, function (data) {
+
+                result = $.parseJSON(data);
+                alert(result);
+
+            });
+        });
+
+        
 
 
        
