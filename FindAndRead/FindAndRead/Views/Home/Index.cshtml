@@ -5,7 +5,7 @@
 
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand text-danger" >Prijavite se</a>
+    <a id="navbarText" class="navbar-brand text-danger" >Prijavite se</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -93,6 +93,7 @@
 
 
     $(document).ready(function () {
+
 
         getAuthors();
 
@@ -216,8 +217,16 @@
 
             $.get("/Home/prijava", { korIme: korIme, lozinka: lozinka }, function (data) {
 
+                if (data != "null") {
+
+                    $("#korIme").hide();
+                    $("#lozinka").hide();
+                    $("#prijava").text("Odjava");
+                    $("#navbarText").text("Odjavite se");
+                }
+
                 result = $.parseJSON(data);
-                alert(result);
+                alert(result.ime);
 
             });
         });
