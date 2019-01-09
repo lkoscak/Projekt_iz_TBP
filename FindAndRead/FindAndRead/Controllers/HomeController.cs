@@ -28,7 +28,8 @@ namespace FindAndRead.Controllers
             //ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Record Inserted Successfully')", true);
             return actor.name+" "+actor.born;*/
 
-            IEnumerable<Autor> autori = Neo4jConnectionHandler.Client.Cypher.Match("(a:Pisac)").Return(a => a.As<Autor>()).Results.ToList();
+            IEnumerable<Autor> autori = Neo4jConnectionHandler.Client.Cypher.Match("(a:Pisac)").Return(a => a.As<Autor>()).Results.ToList().OrderBy(o => o.ime); ;
+         
             var jsonSerialiser = new JavaScriptSerializer();
             var json = jsonSerialiser.Serialize(autori);
 
@@ -52,7 +53,7 @@ namespace FindAndRead.Controllers
 
         public List<BooksForTableData> getBooksForTableByAuthor(string autor)
         {
-            var query = Neo4jConnectionHandler.Client.Cypher.OptionalMatch("(u:Korisnik)-[p:PROCITANO]->(b:Knjiga)-[n:NAPISANO_OD]->(w:Pisac)").Where((Autor w)=>w.ime==".*'+autor+'.*")
+            var query = Neo4jConnectionHandler.Client.Cypher.OptionalMatch("(u:Korisnik)-[p:PROCITANO]->(b:Knjiga)-[n:NAPISANO_OD]->(w:Pisac)").Where((Autor w)=>w.ime==autor)
                .Return((b, p, w) => new BooksForTableData
                {
                    knjiga = b.As<Book>(),
@@ -101,8 +102,31 @@ namespace FindAndRead.Controllers
         {
             List<BooksForTableData> result = getBooksForTableByAuthor(autor);
 
+            foreach (BooksForTableData booksByAuthor in result.ToList())
+            {
+                booksByAuthor.brojCitanja = booksByAuthor.listaCitanja.Count();
+                if (booksByAuthor.brojCitanja == 0) booksByAuthor.prosjecnaOcjena = 0;
+                else
+                {
+                    int sumaOcjena = 0;
+                    foreach (ProcitanoVeza procitanoVeza in booksByAuthor.listaCitanja)
+                    {
+                        sumaOcjena += procitanoVeza.ocjena;
+                    }
+
+                    booksByAuthor.prosjecnaOcjena = Math.Round((double)sumaOcjena / booksByAuthor.brojCitanja, 2);
+
+                }
+
+
+
+
+            }
+
+            List<BooksForTableData> sortedList = result.OrderByDescending(o => o.prosjecnaOcjena).ToList();
+
             var jsonSerialiser = new JavaScriptSerializer();
-            var json = jsonSerialiser.Serialize(result);
+            var json = jsonSerialiser.Serialize(sortedList);
 
             return json;
 

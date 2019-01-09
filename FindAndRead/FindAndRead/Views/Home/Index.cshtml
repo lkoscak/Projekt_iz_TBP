@@ -32,7 +32,6 @@
         <h2 class="text-warning">Preporuka prema razdoblju</h2>
         <p>Preporuka najčitanijih knjiga u odabranom vremenkom razdoblju</p>
         <div class="form-group">
-            
             <select id="timeSelect" class="custom-select">
                 <option value="0" selected="">Odaberite razdoblje</option>
                 <option value="tjedan">Ovaj tjedan</option>
@@ -43,13 +42,12 @@
         </div>
     </div>
     <div class="col-md-4">
-        <h2 class="text-success">Preporuka prema autoru</h2>
+        <h2 class="text-success">Preporuka prema omiljenom autoru</h2>
         <p>Knjige vašeg omiljenog autora sortirane prema prosječnoj ocijeni</p>
         <div class="form-group">
-            <label class="col-form-label, text-success" for="inputDefault">Upišite ime ili prezime autora</label>
-            <input id="autoriAutocomplete" type="text" class="form-control" placeholder="Autor" id="inputDefault">
+            <select id="authorSelect" class="custom-select">
+            </select>
         </div>
-        <button id="selectPremaAutoru" type="button" class="btn btn-success">Pretraži</button>
     </div>
     <div class="col-md-4">
         <h2 class="text-info">Preporuka temeljem pročitanih knjiga</h2>
@@ -82,7 +80,7 @@
 
     $(document).ready(function () {
 
-        //getAuthors();
+        getAuthors();
 
         var rowColors = ["table-success", "table-warning", "table-danger", "table-info"];
 
@@ -96,12 +94,13 @@
                 $.each(result, function (index, value) {
                     console.log(result[index].ime);
                     autori.push(result[index].ime);
+                   
+                    $('#authorSelect').append("<option value='" + result[index].ime + "'>" + result[index].ime + "</option>");
+
                 });
             });
 
-           /* $("#autoriAutocomplete").autocomplete({
-                source: autori
-            });*/
+          
         }
 
         $("#ocjenaSelect").on('change', function (e) {
@@ -118,6 +117,34 @@
                 $("#tablicaPreporuka tbody").empty();
 
                 $.get("/Home/getBooksByRating", { rating: valueSelected }, function (data) {
+                    result = $.parseJSON(data);
+                    $.each(result, function (index, value) {
+                        console.log(result[index]);
+                        var color = rowColors[Math.floor(Math.random() * rowColors.length)];
+                        $('#tablicaPreporuka > tbody:last-child').append('<tr><td class="' + color + '">' + result[index].knjiga.naslov +
+                            '</td><td class="' + color + '">' + result[index].autor.ime + '</td><td class="' + color + '">' + result[index].prosjecnaOcjena + '</td><td class="' + color + '">' + result[index].brojCitanja +
+                            '</td></tr>');
+
+                    });
+                });
+            }
+
+        });
+
+        $("#authorSelect").on('change', function (e) {
+
+            var optionSelected = $("option:selected", this);
+            var valueSelected = this.value;
+
+            if (valueSelected != "0") {
+
+                $([document.documentElement, document.body]).animate({
+                    scrollTop: $("#tablicaContainer").offset().top
+                }, 1000);
+
+                $("#tablicaPreporuka tbody").empty();
+
+                $.get("/Home/GetAuthorsBooks", { autor: valueSelected }, function (data) {
                     result = $.parseJSON(data);
                     $.each(result, function (index, value) {
                         console.log(result[index]);
