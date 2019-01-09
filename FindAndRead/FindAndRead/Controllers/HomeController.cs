@@ -22,6 +22,13 @@ namespace FindAndRead.Controllers
 
         }
 
+        private String userLogedIn()
+        {
+            HttpCookie user_login_cookie = Request.Cookies["prijavljeni_korisnik"];
+            if (user_login_cookie != null) return user_login_cookie["korisnicko_ime"];
+            else return "notLogedIn";
+        }
+
         private void createCookie(String korisnickoIme,String lozinka)
         {
             HttpCookie user = new HttpCookie("prijavljeni_korisnik");
@@ -61,15 +68,36 @@ namespace FindAndRead.Controllers
 
         }
 
-        public List<BooksForTableData> getBooksForTable()
+        public List<BooksForTableData> getBooksForTableForLoggedInUser(String userName)
         {
-            var query = Neo4jConnectionHandler.Client.Cypher.OptionalMatch("(u:Korisnik)-[p:PROCITANO]->(b:Knjiga)-[n:NAPISANO_OD]->(w:Pisac)")
+
+            var query = Neo4jConnectionHandler.Client.Cypher.Match("(u:Korisnik)").Match("(b:Knjiga)").
+                Match("(z:Korisnik)-[p:PROCITANO]->(b)-[:NAPISANO_OD]->(w:Pisac)").
+                Where((Korisnik u) => u.korisnicko_ime == userName).AndWhere("NOT (u)-[:PROCITANO]->(b)")
                .Return((b, p, w) => new BooksForTableData
                {
                    knjiga = b.As<Book>(),
                    listaCitanja = p.CollectAs<ProcitanoVeza>(),
                    autor = w.As<Autor>()
                });
+
+
+            var result = query.Results.ToList();
+            return result;
+        }
+
+        public List<BooksForTableData> getBooksForTable()
+        {
+           
+
+                var query = Neo4jConnectionHandler.Client.Cypher.OptionalMatch("(u:Korisnik)-[p:PROCITANO]->(b:Knjiga)-[n:NAPISANO_OD]->(w:Pisac)")
+                   .Return((b, p, w) => new BooksForTableData
+                   {
+                       knjiga = b.As<Book>(),
+                       listaCitanja = p.CollectAs<ProcitanoVeza>(),
+                       autor = w.As<Autor>()
+                   });
+            
 
             var result = query.Results.ToList();
             return result;
@@ -91,7 +119,9 @@ namespace FindAndRead.Controllers
 
         public string getBooksByRating(string rating)
         {
-            List<BooksForTableData> result = getBooksForTable();
+            List<BooksForTableData> result = null;
+            if (userLogedIn() == "notLogedIn") result = getBooksForTable();
+            else result = getBooksForTableForLoggedInUser(userLogedIn());
 
             foreach (BooksForTableData booksByRatingData in result.ToList())
             {
