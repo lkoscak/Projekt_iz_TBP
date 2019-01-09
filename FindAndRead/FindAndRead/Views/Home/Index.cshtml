@@ -4,7 +4,21 @@
 
 
 
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand text-danger" href="#">Prijavite se</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
+    <div class="collapse navbar-collapse" id="navbarColor03">
+        <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="text" placeholder="korisničko ime">
+            <input class="form-control mr-sm-2" type="text" placeholder="lozinka">
+            <button class="btn btn-outline-danger" type="submit">prijava</button>
+        </form>
+    </div>
+</nav>
+<br><br>
 <div class="jumbotron">
     <h1 align="center" class="text-info">Find&Read</h1>
     <p class="lead" align="center">Najbolje stranica za ljubitelje knjiga kojima je jednostavno potrebna pomoć pri odabiru sljedeće pisane pustolovine</p>
@@ -12,7 +26,7 @@
 </div>
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <h2 class="text-danger">Preporuka prema ocjenama</h2>
         <p>
             Preporučene knjige prema prosječnoj ocijeni jednakoj ili većoj od odabranog kriterija!
@@ -28,7 +42,7 @@
             </select>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <h2 class="text-warning">Preporuka prema razdoblju</h2>
         <p>Preporuka najčitanijih knjiga u odabranom vremenkom razdoblju</p>
         <div class="form-group">
@@ -41,7 +55,7 @@
             </select>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <h2 class="text-success">Preporuka prema omiljenom autoru</h2>
         <p>Knjige vašeg omiljenog autora sortirane prema prosječnoj ocijeni</p>
         <div class="form-group">
@@ -49,8 +63,8 @@
             </select>
         </div>
     </div>
-    <div class="col-md-4">
-        <h2 class="text-info">Preporuka temeljem pročitanih knjiga</h2>
+    <div class="col-md-3">
+        <h2 class="text-info">Automatska preporuka</h2>
         <p>Automatska preporuka knjiga temeljem vaših pročitanih knjiga!</p>
         <button id="gumb" type="button" class="btn btn-outline-info" align="center">Preporuči knjige!</button>
     </div>
