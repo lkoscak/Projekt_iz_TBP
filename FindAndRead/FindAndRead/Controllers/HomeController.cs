@@ -215,7 +215,9 @@ namespace FindAndRead.Controllers
 
         public string getBooksByTime(string timeInterval)
         {
-            List<BooksForTableData> result = getBooksForTable();
+            List<BooksForTableData> result = null;
+            if (userLogedIn() == "notLogedIn") result = getBooksForTable();
+            else result = getBooksForTableForLoggedInUser(userLogedIn());
 
             DateTime trenutniDatum = DateTime.Now.Date;
             bool readFlag=false;
