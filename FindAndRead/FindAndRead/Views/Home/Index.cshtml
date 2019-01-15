@@ -66,7 +66,7 @@
     <div class="col-md-3">
         <h2 class="text-info">Automatska preporuka</h2>
         <p>Automatska preporuka knjiga temeljem vaših pročitanih knjiga!</p>
-        <button id="gumb" type="button" class="btn btn-outline-info" align="center">Preporuči knjige!</button>
+        <button id="gumbAuto"  type="button" class="btn btn-outline-info" align="center">Preporuči knjige!</button>
     </div>
 </div>
 <br>
@@ -101,13 +101,19 @@
             $.get("/Home/LoginStatus", null, function (data) {
                 result = $.parseJSON(data);
 
-                if (result=="da") {
+                if (result == "da") {
 
+                    $("#gumbAuto").prop('disabled', false);
+                    $("#gumbAuto").removeAttr('title');
                     $("#korIme").hide();
                     $("#lozinka").hide();
                     $("#prijava").text("Odjava");
                     $("#navbarText").text("Odjavite se");
 
+                }
+                else {
+                    $("#gumbAuto").prop('disabled', true);
+                    $("#gumbAuto").prop('title', "Prijavite se!");
                 }
                    
 
@@ -241,6 +247,8 @@
 
                     if (data != "null") {
 
+                        $("#gumbAuto").prop('disabled', false);
+                        $("#gumbAuto").removeAttr('title');
                         $("#korIme").hide();
                         $("#lozinka").hide();
                         $("#prijava").text("Odjava");
@@ -263,7 +271,8 @@
                 $.post("/Home/odjava", null, function () {
 
                     
-
+                    $("#gumbAuto").prop('disabled', true);
+                    $("#gumbAuto").prop('title', "Prijavite se!"); 
                         $("#korIme").show();
                         $("#lozinka").show();
                         $("#prijava").text("Prijava");
@@ -284,7 +293,27 @@
         });
 
         
+        $("#gumbAuto").click(function () {
 
+            $([document.documentElement, document.body]).animate({
+                scrollTop: $("#tablicaContainer").offset().top
+            }, 1000);
+
+            $("#tablicaPreporuka tbody").empty();
+
+            $.get("/Home/GetAuto", null,function (data) {
+                result = $.parseJSON(data);
+                $.each(result, function (index, value) {
+                    console.log(result[index]);
+                    var color = rowColors[Math.floor(Math.random() * rowColors.length)];
+                    $('#tablicaPreporuka > tbody:last-child').append('<tr><td class="' + color + '">' + result[index].knjiga.naslov +
+                        '</td><td class="' + color + '">' + result[index].autor.ime + '</td><td class="' + color + '">' + result[index].prosjecnaOcjena + '</td><td class="' + color + '">' + result[index].brojCitanja +
+                        '</td></tr>');
+
+                });
+            });
+
+        });
 
        
 

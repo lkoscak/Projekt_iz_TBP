@@ -1,5 +1,6 @@
 ﻿using FindAndRead.Models;
 using FindAndRead.Neo4j;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,9 +59,9 @@ namespace FindAndRead.Controllers
                 a) => a.ime == "Tom Hanks").Return(m => m.As<Person>()).Results.Single();
             //ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Record Inserted Successfully')", true);
             return actor.name+" "+actor.born;*/
-           
+
+
             
-           
             IEnumerable<Autor> autori = Neo4jConnectionHandler.Client.Cypher.Match("(a:Pisac)").Return(a => a.As<Autor>()).Results.ToList().OrderBy(o => o.ime); ;
          
             var jsonSerialiser = new JavaScriptSerializer();
@@ -307,11 +308,11 @@ namespace FindAndRead.Controllers
                    BrojVeza=dr.Count()  
                });
 
-            var result = query.Results.ToList();
-            return result;
+            var res = query.Results.ToList();
+            return res;
         }
 
-        public String getBooksForTableAutoWay()
+        public List<BooksForTableData> getBooksForTableAutoWay()
         {
             List<TopVeze> lista = getTopUsers(userLogedIn());
             lista.OrderByDescending(o => o.BrojVeza).ToList();
@@ -368,8 +369,15 @@ namespace FindAndRead.Controllers
                 lista.RemoveAt(0);
             }
 
-            var jsonSerialiser = new JavaScriptSerializer();
-            var json = jsonSerialiser.Serialize(listaKnjiga);
+            return listaKnjiga;
+           
+        }
+
+        public String GetAuto()
+        {
+
+
+            var json = JsonConvert.SerializeObject(getBooksForTableAutoWay());
 
             return json;
         }
