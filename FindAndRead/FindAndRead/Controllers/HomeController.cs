@@ -58,9 +58,9 @@ namespace FindAndRead.Controllers
                 a) => a.ime == "Tom Hanks").Return(m => m.As<Person>()).Results.Single();
             //ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Record Inserted Successfully')", true);
             return actor.name+" "+actor.born;*/
-            List<TopVeze> lista = getTopUsers("lkoscak");
-            List<TopVeze> sortedList = lista.OrderByDescending(o => o.BrojVeza).ToList();
-            List<BooksForTableData> lista1 = getBooksForTableAutoWay("lkoscak",sortedList);
+           
+            
+           
             IEnumerable<Autor> autori = Neo4jConnectionHandler.Client.Cypher.Match("(a:Pisac)").Return(a => a.As<Autor>()).Results.ToList().OrderBy(o => o.ime); ;
          
             var jsonSerialiser = new JavaScriptSerializer();
@@ -311,16 +311,18 @@ namespace FindAndRead.Controllers
             return result;
         }
 
-        public List<BooksForTableData> getBooksForTableAutoWay(String userName,List<TopVeze> lista)
+        public String getBooksForTableAutoWay()
         {
+            List<TopVeze> lista = getTopUsers(userLogedIn());
+            lista.OrderByDescending(o => o.BrojVeza).ToList();
             List<BooksForTableData> listaKnjiga = new List<BooksForTableData>();
-            while (listaKnjiga.Count() < 1 || lista.Count != 0)
+            while (listaKnjiga.Count() < 2 && lista.Count != 0)
             {
                 string topKorisnik = lista.First().Korisnik.ime;
                 var query = Neo4jConnectionHandler.Client.Cypher.Match("(u:Korisnik)").
                     Match("(z:Korisnik)").
                     Match("(z)-[p:PROCITANO]->(b:Knjiga)-[:NAPISANO_OD]->(w:Pisac)").
-                    Where((Korisnik u) => u.korisnicko_ime == userName).
+                    Where((Korisnik u) => u.korisnicko_ime == userLogedIn()).
                     AndWhere((Korisnik z) => z.ime== topKorisnik).
                     AndWhere("NOT (u)-[:PROCITANO]->(b)").
 
@@ -337,6 +339,7 @@ namespace FindAndRead.Controllers
                 {
                     foreach (var item in result)
                     {
+                        setPropOfABook(item);
                         listaKnjiga.Add(item);
                     }
                 }
@@ -355,13 +358,51 @@ namespace FindAndRead.Controllers
                             }
                         }
                         if (flag) flag = false;
-                        else listaKnjiga.Add(item);
+                        else
+                        {
+                            setPropOfABook(item);
+                            listaKnjiga.Add(item);
+                        }
                     }
                 }
                 lista.RemoveAt(0);
             }
-            return listaKnjiga;
+
+            var jsonSerialiser = new JavaScriptSerializer();
+            var json = jsonSerialiser.Serialize(listaKnjiga);
+
+            return json;
         }
+
+        public void setPropOfABook(BooksForTableData knjiga)
+        {
+            var query = Neo4jConnectionHandler.Client.Cypher.OptionalMatch("(u:Korisnik)-[p:PROCITANO]->(b:Knjiga)").
+                 Where((Book b) => b.naslov == knjiga.knjiga.naslov).Return(p => p.As<ProcitanoVeza>());
+
+            var result = query.Results.ToList();
+
+            knjiga.brojCitanja = result.Count();
+
+            if (knjiga.brojCitanja == 0) knjiga.prosjecnaOcjena = 0;
+            else
+            {
+                int sumaOcjena = 0;
+
+                foreach (ProcitanoVeza veza in result.ToList())
+                {
+                    
+     
+                            sumaOcjena += veza.ocjena;
+                       
+                       
+
+                }
+
+                knjiga.prosjecnaOcjena = Math.Round((double)sumaOcjena / knjiga.brojCitanja, 2);
+
+                }
+            }
+        
 
 
         public ActionResult About()
