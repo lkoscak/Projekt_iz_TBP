@@ -15,7 +15,7 @@ namespace FindAndRead.Controllers
         public ActionResult Index()
         {
             
-
+            
             /*Person actor = Neo4jConnectionHandler.Client.Cypher.Match("(m:Person)").Where((Person
                 m) => m.name=="Tom Hanks").Return(m => m.As<Person>()).Results.Single();*/
             return View();
@@ -58,13 +58,17 @@ namespace FindAndRead.Controllers
                 a) => a.ime == "Tom Hanks").Return(m => m.As<Person>()).Results.Single();
             //ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Record Inserted Successfully')", true);
             return actor.name+" "+actor.born;*/
-
+            List<TopVeze> lista = getTopUsers("lkoscak");
+            List<TopVeze> sortedList = lista.OrderByDescending(o => o.BrojVeza).ToList();
+            List<BooksForTableData> lista1 = getBooksForTableAutoWay("lkoscak",sortedList);
             IEnumerable<Autor> autori = Neo4jConnectionHandler.Client.Cypher.Match("(a:Pisac)").Return(a => a.As<Autor>()).Results.ToList().OrderBy(o => o.ime); ;
          
             var jsonSerialiser = new JavaScriptSerializer();
             var json = jsonSerialiser.Serialize(autori);
 
             return json;
+
+            
 
         }
 
@@ -290,6 +294,73 @@ namespace FindAndRead.Controllers
 
             return json;
 
+        }
+
+        public List<TopVeze> getTopUsers(String userName)
+        {
+            var query = Neo4jConnectionHandler.Client.Cypher.Match("(u:Korisnik)").Match("(dr:Korisnik)").
+                Match("(u:Korisnik)-[:PROCITANO]->(:Knjiga)<-[:PROCITANO]-(dr:Korisnik)").
+                Where((Korisnik u) => u.korisnicko_ime == userName)
+               .Return((dr) => new TopVeze
+               {
+                   Korisnik=dr.As<Korisnik>(),
+                   BrojVeza=dr.Count()  
+               });
+
+            var result = query.Results.ToList();
+            return result;
+        }
+
+        public List<BooksForTableData> getBooksForTableAutoWay(String userName,List<TopVeze> lista)
+        {
+            List<BooksForTableData> listaKnjiga = new List<BooksForTableData>();
+            while (listaKnjiga.Count() < 1 || lista.Count != 0)
+            {
+                string topKorisnik = lista.First().Korisnik.ime;
+                var query = Neo4jConnectionHandler.Client.Cypher.Match("(u:Korisnik)").
+                    Match("(z:Korisnik)").
+                    Match("(z)-[p:PROCITANO]->(b:Knjiga)-[:NAPISANO_OD]->(w:Pisac)").
+                    Where((Korisnik u) => u.korisnicko_ime == userName).
+                    AndWhere((Korisnik z) => z.ime== topKorisnik).
+                    AndWhere("NOT (u)-[:PROCITANO]->(b)").
+
+                   Return((b, p, w) => new BooksForTableData
+                   {
+                       knjiga = b.As<Book>(),
+                       listaCitanja = p.CollectAs<ProcitanoVeza>(),
+                       autor = w.As<Autor>()
+                   });
+
+                var result = query.Results.ToList();
+
+                if (listaKnjiga.Count() == 0)
+                {
+                    foreach (var item in result)
+                    {
+                        listaKnjiga.Add(item);
+                    }
+                }
+
+                else
+                {
+                    bool flag = false;
+                    foreach (var item in result)
+                    {
+                        foreach (var item1 in listaKnjiga)
+                        {
+                            if (item.knjiga.naslov == item1.knjiga.naslov)
+                            {
+                                flag = true;
+                                break;
+                            }
+                        }
+                        if (flag) flag = false;
+                        else listaKnjiga.Add(item);
+                    }
+                }
+                lista.RemoveAt(0);
+            }
+            return listaKnjiga;
         }
 
 
