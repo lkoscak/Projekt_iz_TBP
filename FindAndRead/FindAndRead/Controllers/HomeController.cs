@@ -117,6 +117,22 @@ namespace FindAndRead.Controllers
             return result;
         }
 
+        public List<BooksForTableData> getBooksForTableByAuthorForLogedUser(string autor, String userName)
+        {
+            var query = Neo4jConnectionHandler.Client.Cypher.Match("(u:Korisnik)").Match("(b:Knjiga)").
+                Match("(z:Korisnik)-[p:PROCITANO]->(b)-[:NAPISANO_OD]->(w:Pisac)").Where((Autor w) => w.ime == autor).
+                AndWhere((Korisnik u) => u.korisnicko_ime == userName).AndWhere("NOT (u)-[:PROCITANO]->(b)")
+               .Return((b, p, w) => new BooksForTableData
+               {
+                   knjiga = b.As<Book>(),
+                   listaCitanja = p.CollectAs<ProcitanoVeza>(),
+                   autor = w.As<Autor>()
+               });
+
+            var result = query.Results.ToList();
+            return result;
+        }
+
         public string getBooksByRating(string rating)
         {
             List<BooksForTableData> result = null;
@@ -154,7 +170,10 @@ namespace FindAndRead.Controllers
 
         public string GetAuthorsBooks(string autor)
         {
-            List<BooksForTableData> result = getBooksForTableByAuthor(autor);
+            List<BooksForTableData> result = null;
+            if (userLogedIn() == "notLogedIn") result = getBooksForTableByAuthor(autor);
+            else result = getBooksForTableByAuthorForLogedUser(autor,userLogedIn());
+
 
             foreach (BooksForTableData booksByAuthor in result.ToList())
             {
