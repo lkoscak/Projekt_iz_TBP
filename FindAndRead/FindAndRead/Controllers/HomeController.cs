@@ -60,7 +60,7 @@ namespace FindAndRead.Controllers
             //ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Record Inserted Successfully')", true);
             return actor.name+" "+actor.born;*/
 
-
+            //List<BooksForTableData> lista = getBooksForTableAutoWay();
             
             IEnumerable<Autor> autori = Neo4jConnectionHandler.Client.Cypher.Match("(a:Pisac)").Return(a => a.As<Autor>()).Results.ToList().OrderBy(o => o.ime); ;
          
@@ -216,7 +216,7 @@ namespace FindAndRead.Controllers
             HttpCookie user_login_cookie = Request.Cookies["prijavljeni_korisnik"];
             if (user_login_cookie != null)
             {
-                response = "da";
+                response = user_login_cookie["korisnicko_ime"];
             }
 
             var jsonSerialiser = new JavaScriptSerializer();
@@ -314,16 +314,17 @@ namespace FindAndRead.Controllers
 
         public List<BooksForTableData> getBooksForTableAutoWay()
         {
-            List<TopVeze> lista = getTopUsers(userLogedIn());
+            String logedUser = userLogedIn();
+            List<TopVeze> lista = getTopUsers(logedUser);
             lista.OrderByDescending(o => o.BrojVeza).ToList();
             List<BooksForTableData> listaKnjiga = new List<BooksForTableData>();
-            while (listaKnjiga.Count() < 2 && lista.Count != 0)
+            while (listaKnjiga.Count() <= 5 && lista.Count != 0)
             {
                 string topKorisnik = lista.First().Korisnik.ime;
                 var query = Neo4jConnectionHandler.Client.Cypher.Match("(u:Korisnik)").
                     Match("(z:Korisnik)").
                     Match("(z)-[p:PROCITANO]->(b:Knjiga)-[:NAPISANO_OD]->(w:Pisac)").
-                    Where((Korisnik u) => u.korisnicko_ime == userLogedIn()).
+                    Where((Korisnik u) => u.korisnicko_ime == logedUser).
                     AndWhere((Korisnik z) => z.ime== topKorisnik).
                     AndWhere("NOT (u)-[:PROCITANO]->(b)").
 
@@ -378,7 +379,6 @@ namespace FindAndRead.Controllers
 
 
             var json = JsonConvert.SerializeObject(getBooksForTableAutoWay());
-
             return json;
         }
 
