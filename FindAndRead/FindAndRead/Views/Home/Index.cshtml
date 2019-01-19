@@ -93,9 +93,15 @@
 
     $(document).ready(function () {
 
+        // Pozivi funkcija
         checkLoginStatus();
         tableSetupNoData();
+        getAuthors();
 
+        // Definicija boja za automatksu promjenu
+        var rowColors = ["table-success", "table-warning", "table-danger", "table-info"];
+
+        // Setup tablice kada se ne traži preporuka
         function tableSetupNoData() {
 
             $("#tablicaPreporuka tbody").empty();
@@ -109,6 +115,7 @@
 
         }
 
+        // Setup tablice kada se traži preporuka
         function tableSetupData() {
 
             $("#naslovPrikaza").show();
@@ -119,6 +126,7 @@
 
         }
 
+        // Provjera logiranog korisnika
         function checkLoginStatus() {
 
             $.get("/Home/LoginStatus", null, function (data) {
@@ -146,10 +154,7 @@
 
         }
 
-        getAuthors();
-
-        var rowColors = ["table-success", "table-warning", "table-danger", "table-info"];
-
+        // Dohvat autora za izbornik
         function getAuthors() {
 
             var autori = [];
@@ -169,8 +174,7 @@
           
         }
 
-        
-
+        // metoda odabira ratinga
         $("#ocjenaSelect").on('change', function (e) {
 
             var optionSelected = $("option:selected", this);
@@ -201,6 +205,7 @@
 
         });
 
+        // metoda odabira autora
         $("#authorSelect").on('change', function (e) {
 
             var optionSelected = $("option:selected", this);
@@ -231,6 +236,7 @@
 
         });
 
+        // metoda odabira intervala
         $("#timeSelect").on('change', function (e) {
 
             var optionSelected = $("option:selected", this);
@@ -261,8 +267,7 @@
 
         });
 
-       
-
+        // prijava i odjava
         $("#prijava").click(function () {
 
             var akcija = $("#prijava").text();
@@ -333,7 +338,7 @@
           
         });
 
-        
+        // automatska preporuka
         $("#gumbAuto").click(function () {
 
             $([document.documentElement, document.body]).animate({
@@ -358,31 +363,8 @@
 
         });
 
-       
-
-
-        $("#selectPremaAutoru").click(function () {
-
-            var autor = $('#autoriAutocomplete').val();
-
-            $.get("/Home/GetAuthorsBooks", { autor: autor }, function (data) {
-                alert(data);
-                /*result = $.parseJSON(data);
-                //console.log(result[0].name);
-                $([document.documentElement, document.body]).animate({
-                    scrollTop: $("#tablicaContainer").offset().top
-                }, 1000);
-                $("#tablicaPreporuka tbody").empty();
-                $.each(result, function (index,value) {
-                    console.log(result[index].name);
-                    $('#tablicaPreporuka').focus();
-                    $('#tablicaPreporuka > tbody:last-child').append('<tr><td>'+result[index].name+'</td></tr>');
-
-                    });*/
-                });
-            });  
+ 
         });
-
-    //});
+        
 </script>
 

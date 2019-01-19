@@ -15,14 +15,10 @@ namespace FindAndRead.Controllers
     {
         public ActionResult Index()
         {
-            
-            
-            /*Person actor = Neo4jConnectionHandler.Client.Cypher.Match("(m:Person)").Where((Person
-                m) => m.name=="Tom Hanks").Return(m => m.As<Person>()).Results.Single();*/
             return View();
-
         }
 
+        //Provjerava da li je korisnik ulogiran u sustav
         private String userLogedIn()
         {
             HttpCookie user_login_cookie = Request.Cookies["prijavljeni_korisnik"];
@@ -30,6 +26,7 @@ namespace FindAndRead.Controllers
             else return "notLogedIn";
         }
 
+        //Kreira kolačić koji pamti prijavljenog korisnika
         private void createCookie(String korisnickoIme,String lozinka)
         {
             HttpCookie user = new HttpCookie("prijavljeni_korisnik");
@@ -37,6 +34,7 @@ namespace FindAndRead.Controllers
             Response.Cookies.Add(user);
         }
 
+        //Metoda za prijavu
         public String prijava(String korIme, String lozinka)
         {
             Korisnik korisnik = Neo4jConnectionHandler.Client.Cypher.OptionalMatch("(a:Korisnik)").Where((Korisnik
@@ -53,14 +51,38 @@ namespace FindAndRead.Controllers
             return json;
         }
 
+        // Vraća status login kolačića
+        public String LoginStatus()
+        {
+            String response = "ne";
+            HttpCookie user_login_cookie = Request.Cookies["prijavljeni_korisnik"];
+            if (user_login_cookie != null)
+            {
+                response = user_login_cookie["korisnicko_ime"];
+            }
+
+            var jsonSerialiser = new JavaScriptSerializer();
+            var json = jsonSerialiser.Serialize(response);
+
+            return json;
+
+        }
+
+        // Odjavljuje korisnika iz sustava
+        public void odjava()
+        {
+            HttpCookie user_login_cookie = Request.Cookies["prijavljeni_korisnik"];
+            if (user_login_cookie != null)
+            {
+                HttpCookie myCookie = new HttpCookie("prijavljeni_korisnik");
+                myCookie.Expires = DateTime.Now.AddDays(-1d);
+                Response.Cookies.Add(myCookie);
+            }
+        }
+ 
+        //Dohvat autora za popunjavanje izbornika
         public String GetAuthors()
         {
-            /*Autor autor = Neo4jConnectionHandler.Client.Cypher.Match("(a:Autor)").Where((Autor
-                a) => a.ime == "Tom Hanks").Return(m => m.As<Person>()).Results.Single();
-            //ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Record Inserted Successfully')", true);
-            return actor.name+" "+actor.born;*/
-
-            //List<BooksForTableData> lista = getBooksForTableAutoWay();
             
             IEnumerable<Autor> autori = Neo4jConnectionHandler.Client.Cypher.Match("(a:Pisac)").Return(a => a.As<Autor>()).Results.ToList().OrderBy(o => o.ime); ;
          
@@ -73,6 +95,8 @@ namespace FindAndRead.Controllers
 
         }
 
+
+        //Dohvat knjiga  za logiranog korisnika
         public List<BooksForTableData> getBooksForTableForLoggedInUser(String userName)
         {
 
@@ -91,6 +115,7 @@ namespace FindAndRead.Controllers
             return result;
         }
 
+        //Općeniti dohvat knjiga za nelogiranog korisnika
         public List<BooksForTableData> getBooksForTable()
         {
            
@@ -108,6 +133,8 @@ namespace FindAndRead.Controllers
             return result;
         }
 
+
+        // Dohvat knjiga prema odabranom autoru za nelogiranog korisnika
         public List<BooksForTableData> getBooksForTableByAuthor(string autor)
         {
             var query = Neo4jConnectionHandler.Client.Cypher.OptionalMatch("(u:Korisnik)-[p:PROCITANO]->(b:Knjiga)-[n:NAPISANO_OD]->(w:Pisac)").Where((Autor w)=>w.ime==autor)
@@ -122,6 +149,7 @@ namespace FindAndRead.Controllers
             return result;
         }
 
+        // Dohvat knjiga prema autoru za logiranog korisnika
         public List<BooksForTableData> getBooksForTableByAuthorForLogedUser(string autor, String userName)
         {
             var query = Neo4jConnectionHandler.Client.Cypher.Match("(u:Korisnik)").Match("(b:Knjiga)").
@@ -138,6 +166,8 @@ namespace FindAndRead.Controllers
             return result;
         }
 
+
+        // Filtriranje dohvaćenih knjiga prema odabranom ratingu
         public string getBooksByRating(string rating)
         {
             List<BooksForTableData> result = null;
@@ -173,6 +203,7 @@ namespace FindAndRead.Controllers
 
         }
 
+        // Izračuni prosječne ocjene i brojačitanja za knjige dohvaćene prema autoru
         public string GetAuthorsBooks(string autor)
         {
             List<BooksForTableData> result = null;
@@ -197,8 +228,6 @@ namespace FindAndRead.Controllers
                 }
 
 
-
-
             }
 
             List<BooksForTableData> sortedList = result.OrderByDescending(o => o.prosjecnaOcjena).ToList();
@@ -210,33 +239,7 @@ namespace FindAndRead.Controllers
 
         }
 
-        public String LoginStatus()
-        {
-            String response = "ne";
-            HttpCookie user_login_cookie = Request.Cookies["prijavljeni_korisnik"];
-            if (user_login_cookie != null)
-            {
-                response = user_login_cookie["korisnicko_ime"];
-            }
-
-            var jsonSerialiser = new JavaScriptSerializer();
-            var json = jsonSerialiser.Serialize(response);
-
-            return json;
-
-        }
-
-        public void odjava()
-        {
-            HttpCookie user_login_cookie = Request.Cookies["prijavljeni_korisnik"];
-            if (user_login_cookie != null)
-            {
-                HttpCookie myCookie = new HttpCookie("prijavljeni_korisnik");
-                myCookie.Expires = DateTime.Now.AddDays(-1d);
-                Response.Cookies.Add(myCookie);
-            }
-        }
-
+        // Filtrira knjigee prema odabranom vremenskom intervalu
         public string getBooksByTime(string timeInterval)
         {
             List<BooksForTableData> result = null;
@@ -297,6 +300,8 @@ namespace FindAndRead.Controllers
 
         }
 
+        
+        // Dohvat najboljih veza logiranog korisnika
         public List<TopVeze> getTopUsers(String userName)
         {
             var query = Neo4jConnectionHandler.Client.Cypher.Match("(u:Korisnik)").Match("(dr:Korisnik)").
@@ -312,6 +317,7 @@ namespace FindAndRead.Controllers
             return res;
         }
 
+        // Dohvat knjiga automatskim putem
         public List<BooksForTableData> getBooksForTableAutoWay()
         {
             String logedUser = userLogedIn();
@@ -374,14 +380,15 @@ namespace FindAndRead.Controllers
            
         }
 
+        // Vraća knjige dohvaćene automatskim putem
         public String GetAuto()
         {
-
 
             var json = JsonConvert.SerializeObject(getBooksForTableAutoWay());
             return json;
         }
 
+        // Postavlja prosječnu ocjenu i broj čitanja za automatsku preporuku
         public void setPropOfABook(BooksForTableData knjiga)
         {
             var query = Neo4jConnectionHandler.Client.Cypher.OptionalMatch("(u:Korisnik)-[p:PROCITANO]->(b:Knjiga)").
